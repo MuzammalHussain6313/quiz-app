@@ -1,0 +1,22 @@
+.container {
+    z-index: 10000;
+    position: fixed !important;
+    display: flex;
+    top: 1% !important;
+}
+
+.success {
+    background: rgb(71, 190, 71);
+}
+
+.error {
+    background-color: rgb(190, 71, 71);
+}
+
+.warning {
+    background-color: rgb(241, 205, 106);
+}
+
+.rightPosition {
+    float: right;
+}

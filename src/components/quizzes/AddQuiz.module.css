@@ -1,0 +1,44 @@
+.form {
+    padding: 10px;
+}
+
+.fieldContainer{
+    padding: 10px;
+}
+
+.inputField {
+    width: 70%;
+    height: 50px;
+    border-radius: 7px;
+    border: 0px;
+    font-size: 18px;
+    padding-left: 10px;
+}
+
+.submitButton {
+    width: 35%;
+    height: 50px;
+    border-radius: 7px;
+    border: 0px;
+    font-size: 20px;
+    color: green;
+    background: #282c34;
+}
+
+.questions {
+    text-align: start;
+    margin: 1% 16% 1% 16%;
+    padding: 10px;
+    background: cornsilk;
+    border-radius: 10px;
+}
+
+.icons {
+    height: 30px;
+    width: 30px;
+    margin-top: 5px;
+}
+
+.iconCol {
+    text-align: end;
+}

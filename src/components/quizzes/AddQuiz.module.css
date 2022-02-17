@@ -42,3 +42,8 @@
 .iconCol {
     text-align: end;
 }
+
+.marksCol {
+    text-align: end;
+    padding-right: 30px;
+}

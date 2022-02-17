@@ -4,6 +4,10 @@
   min-height: 100vh;
 }
 
+.body {
+  padding-top: 90px;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;

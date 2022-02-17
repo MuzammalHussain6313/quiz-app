@@ -57,3 +57,8 @@
     padding-left: 10px;
     padding-top: 10px;
 }
+
+.marksCol {
+    text-align: end;
+    padding-right: 30px;
+}

@@ -1,10 +1,19 @@
+
 import React, {Component} from "react";
 import classes from './AddQuestion.module.css';
+import Toastify from "../../customUI/showToast/Toastify";
 
 class AddQuestion extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            toast: {
+                show: false,
+                text: '',
+                type: '' // success | error
+            }
+        }
         this.question = React.createRef();
         this.correctAnswer = React.createRef();
         this.marks = React.createRef();
@@ -36,6 +45,10 @@ class AddQuestion extends Component {
                 {text: this.optionC.current.value, checked: false}, {text: this.optionD.current.value, checked: false}];
             question.marks = this.marks.current.value
         } else if(this.props.type === 'fillInBlank'){
+            if(this.part1.current.value === '' || this.part2.current.value === ''){
+                this.showToast('please enter at least one part before or after blank space', 'error');
+                return;
+            }
             question.questionId = `id_${Math.random()}`;
             question.part1 = this.part1.current.value;
             question.part2 = this.part2.current.value;
@@ -55,10 +68,23 @@ class AddQuestion extends Component {
         }, () => {});
     }
 
+    showToast = async (text, type) => {
+        if(!this.state.toast.show){
+            await this.setState((prevState, props) => ({
+                toast: { show : true, text : text, type : type }
+            }));
+            setTimeout(async () => {
+                await this.setState((prevState, props) => ({
+                    toast: { show : false, text : '', type : '' }
+                }));
+            }, 3000);
+        }
+    }
+
     render() {
         return (
             <React.Fragment>
-                <div className={classes.form}>
+                <div className={`${classes.form} body`}>
                     { this.props.type === 'mcq' && <form onSubmit={this.AddQuestion}>
 
                         <h3 className={classes.questionHeading}>Add Question</h3>
@@ -103,12 +129,12 @@ class AddQuestion extends Component {
 
                     { this.props.type === 'fillInBlank' && <form onSubmit={this.AddQuestion}>
                         <div className={classes.fieldContainer}>
-                            <input required={true} minLength={10} ref={this.part1} className={classes.inputField} type="text" id="part1"
+                            <input required={true} ref={this.part1} className={classes.inputField} type="text" id="part1"
                                    placeholder="Question part before blank space..."/>
                         </div>
 
                         <div className={classes.fieldContainer}>
-                            <input required={true} minLength={10} ref={this.part2} className={classes.inputField} type="text" id="part2"
+                            <input required={true} ref={this.part2} className={classes.inputField} type="text" id="part2"
                                    placeholder="Question part after black space..."/>
                         </div>
 
@@ -175,6 +201,13 @@ class AddQuestion extends Component {
                         </div>
                     </form> : "" }
                 </div>
+                { this.state.toast.show &&
+                    <Toastify
+                        type={this.state.toast.type}
+                        show={this.state.toast.show}
+                        text={this.state.toast.text}
+                        delay={3000}/>
+                }
             </React.Fragment>
         )
     };

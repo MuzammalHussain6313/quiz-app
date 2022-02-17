@@ -50,12 +50,17 @@ class Quizzes extends Component{
         }
     }
 
+    componentDidMount() {
+        var quizzes = JSON.parse(localStorage.getItem('quizzes'));
+        console.log('quizzes: ', quizzes);
+    }
+
     render() {
 
         return (
             <React.Fragment>
                 {
-                    <Container>
+                    <Container className="body">
                         <Row>
                             {this.state.quizzes.map((quiz) => (
                                 <Col md="6" key={quiz.id}>

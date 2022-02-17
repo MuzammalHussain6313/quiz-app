@@ -1,6 +1,7 @@
 
 import React, {Component} from "react";
 import classes from './Question.module.css'
+import {Col, Row} from "react-bootstrap";
 class Question extends Component {
 
     constructor(props) {
@@ -17,8 +18,11 @@ class Question extends Component {
 
         return (
             <React.Fragment>
+                <Row>
+                    <Col xs={"9"}><h6>Question No. {this.props.questionNo}</h6></Col>
+                    <Col xs={"3"} className={classes.marksCol}><p>Marks: {this.props.marks}</p></Col>
+                </Row>
                 {this.props.type === 'mcq' && <div className={classes.question}>
-                    <h6>Question No. {this.props.questionNo}</h6>
                     <p> {this.props.question}</p>
                     <div>
                         <form>
@@ -34,7 +38,6 @@ class Question extends Component {
                     </div>
                 </div>}
                 {this.props.type === 'bool' && <div className={classes.question}>
-                    <h6>Question No. {this.props.questionNo}</h6>
                     <p> {this.props.question}</p>
                     <div>
                         <form>
@@ -46,7 +49,6 @@ class Question extends Component {
                     </div>
                 </div>}
                 {this.props.type === 'fillInBlank' && <div className={classes.question}>
-                    <h6>Question No. {this.props.questionNo}</h6>
                     <div> {this.props.question.part1}
                         <input className={`${classes.radioButton} ${classes.blankSpace}`} type="text" name={this.props.questionId} placeholder={"Fill in the blank..."} />
                         {this.props.question.part2}
@@ -54,7 +56,6 @@ class Question extends Component {
                 </div>}
 
                 {this.props.type === 'short' && <div className={classes.question}>
-                    <h6>Question No. {this.props.questionNo}</h6>
                     <div> <p>{this.props.question}</p>
                         <textarea className={`${classes.radioButton} ${classes.textareaField}`} name={this.props.questionId} placeholder={"Type answer..."} />
                     </div>

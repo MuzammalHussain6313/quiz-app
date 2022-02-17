@@ -5,6 +5,8 @@
   justify-content: space-between;
   align-items: center;
   background-color: #282c34;
+  position: fixed !important;
+  width: 100%;
 }
 
 .logo {

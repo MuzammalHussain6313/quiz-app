@@ -7,14 +7,17 @@
 
 .success {
     background: rgb(71, 190, 71);
+    width: 750px !important;
 }
 
 .error {
     background-color: rgb(190, 71, 71);
+    width: 750px !important;
 }
 
 .warning {
     background-color: rgb(241, 205, 106);
+    width: 750px !important;
 }
 
 .rightPosition {

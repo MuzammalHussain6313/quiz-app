@@ -1,0 +1,29 @@
+.questions {
+    text-align: start;
+    margin: 1% 5% 1% 5%;
+    padding: 10px;
+    background: cornsilk;
+    border-radius: 10px;
+}
+
+.header {
+    text-align: start;
+    margin: 1% 5% 1% 4%;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.marksContainer {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.buttonRow {
+    justify-content: center;
+    padding-top: 10px;
+}
+
+.submitButton {
+    width: 100%;
+    border-radius: 7px;
+}

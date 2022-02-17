@@ -11,6 +11,9 @@ class Question extends Component {
         }
     }
 
+    componentDidMount() {
+    }
+
     selectionChanged = () => {
     }
 
@@ -38,7 +41,7 @@ class Question extends Component {
                     </div>
                 </div>}
                 {this.props.type === 'bool' && <div className={classes.question}>
-                    <p> {this.props.question}</p>
+                    <p> 34567890-098745678 {this.props.question.question}</p>
                     <div>
                         <form>
                             <input className={classes.radioButton} type="radio" onChange={this.selectionChanged} name={this.props.questionId} value="true"
@@ -47,6 +50,10 @@ class Question extends Component {
                                    checked={false}/> False
                         </form>
                     </div>
+                    { this.props.question.getReason === true && <div>
+                        <p>Give the reason for your answer.</p>
+                        <textarea className={`${classes.radioButton} ${classes.textareaField}`} name={this.props.questionId} placeholder={"Type answer..."} />
+                    </div>}
                 </div>}
                 {this.props.type === 'fillInBlank' && <div className={classes.question}>
                     <div> {this.props.question.part1}

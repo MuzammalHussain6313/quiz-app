@@ -1,8 +1,18 @@
 
 .listItem {
     margin: 10px;
-    padding: 10px 0px 10px 40px;
+    padding: 10px 0px 10px 20px;
     background: lightgray;
     border-radius: 10px;
     text-align: start;
+}
+
+.upcomingHeader {
+    text-align: start;
+    padding-left: 5%;
+}
+
+.noData {
+    padding-top: 10%;
+    color: darkslategray;
 }

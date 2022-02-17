@@ -30,8 +30,6 @@ class AddQuiz extends Component{
 
     addQuiz(event) {
         event.preventDefault();
-        console.log('date : ', this.date.current.value);
-        console.log('time: ', this.time.current.value);
         if(this.state.questions.length === 0){
             this.showToast('No question added to the quiz. Please add questions to add quiz.', 'error');
             return;
@@ -169,7 +167,7 @@ class AddQuiz extends Component{
                     { this.state.showQuestions &&
                         this.state.questions.map((question, index) => (
                             <div>
-                                { question.type === 'fillInBlank' ? <Question key={question.questionId}
+                                { (question.type === 'fillInBlank' || question.type === 'bool') ? <Question key={question.questionId}
                                     type={question.type}
                                     questionNo={index + 1}
                                     question={question}

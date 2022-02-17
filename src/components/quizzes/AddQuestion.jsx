@@ -34,7 +34,7 @@ class AddQuestion extends Component {
             question.question = this.question.current.value;
             question.correctAnswer = this.correctAnswer.current.value;
             question.type = 'bool';
-            question.getReason = this.getReason.current.value;
+            question.getReason = this.getReason.current.value === 'true';
             question.marks = this.marks.current.value
         } else if(this.props.type === 'mcq'){
             question.questionId = `id_${Math.random()}`;

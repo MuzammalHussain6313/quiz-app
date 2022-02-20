@@ -7,14 +7,34 @@ class Question extends Component {
     constructor(props) {
         super(props);
         this.state= {
-
-        }
+        };
     }
 
     componentDidMount() {
     }
 
-    selectionChanged = () => {
+    updateAnswer(event){
+        this.props.updateAnswer(this.props.index, event.target.value);
+    }
+
+    mcqSelectionChanged = async (index, event) => {
+        const { name, value } = event.target;
+        await this.setState({
+            [name]: value
+        });
+        this.props.updateAnswer(this.props.index, this.state[`${this.props.type}`]);
+    };
+
+    boolSelectionChanged = async (event) => {
+        const { name, value } = event.target;
+        await this.setState({
+            [name]: value
+        });
+        this.props.updateAnswer(this.props.index, this.state[`${this.props.type}`]);
+    };
+
+    saveReason = (event) => {
+        this.props.updateReason(this.props.index, event.target.value);
     }
 
     render() {
@@ -29,42 +49,45 @@ class Question extends Component {
                     <p> {this.props.question}</p>
                     <div>
                         <form>
-                            <input className={classes.radioButton} type="radio" name={this.props.questionId} value=""
-                                   onChange={this.selectionChanged} checked={this.props.options[0].checked}/> {this.props.options[0].text}
-                            <input className={classes.radioButton} type="radio" name={this.props.questionId} value=""
-                                   onChange={this.selectionChanged} checked={this.props.options[1].checked}/> {this.props.options[1].text}
-                            <input className={classes.radioButton} type="radio" name={this.props.questionId} value=""
-                                   onChange={this.selectionChanged} checked={this.props.options[2].checked}/> {this.props.options[2].text}
-                            <input className={classes.radioButton} type="radio" name={this.props.questionId} value=""
-                                   onChange={this.selectionChanged} checked={this.props.options[3].checked}/> {this.props.options[3].text}
+                            {
+                                this.props.options.map((option, index) => (
+                                    <div>
+                                        <input className={classes.radioButton}
+                                            type="radio" id={option.text} name={this.props.type}
+                                            value={option.text} onChange={this.mcqSelectionChanged.bind(this, index)} /> {option.text}
+                                    </div>
+                                ))
+                            }
                         </form>
                     </div>
                 </div>}
                 {this.props.type === 'bool' && <div className={classes.question}>
-                    <p> 34567890-098745678 {this.props.question.question}</p>
+                    <p>{this.props.question.question}</p>
                     <div>
                         <form>
-                            <input className={classes.radioButton} type="radio" onChange={this.selectionChanged} name={this.props.questionId} value="true"
-                                   checked={false}/> True
-                            <input className={classes.radioButton} type="radio" onChange={this.selectionChanged} name={this.props.questionId} value="false"
-                                   checked={false}/> False
+                            <input className={classes.radioButton}
+                                type="radio" id={"true"} name={this.props.type}
+                                value={"true"} onChange={this.boolSelectionChanged.bind(this)} /> True
+                            <input className={classes.radioButton}
+                                type="radio" id={"false"} name={this.props.type}
+                                value={"false"} onChange={this.boolSelectionChanged.bind(this)} /> False
                         </form>
                     </div>
                     { this.props.question.getReason === true && <div>
                         <p>Give the reason for your answer.</p>
-                        <textarea className={`${classes.radioButton} ${classes.textareaField}`} name={this.props.questionId} placeholder={"Type answer..."} />
+                        <textarea onChange={this.saveReason.bind(this)} className={`${classes.radioButton} ${classes.textareaField}`} name={this.props.questionId} placeholder={"Type answer..."} />
                     </div>}
                 </div>}
                 {this.props.type === 'fillInBlank' && <div className={classes.question}>
                     <div> {this.props.question.part1}
-                        <input className={`${classes.radioButton} ${classes.blankSpace}`} type="text" name={this.props.questionId} placeholder={"Fill in the blank..."} />
+                        <input onChange={this.updateAnswer.bind(this)} className={`${classes.radioButton} ${classes.blankSpace}`} type="text" name={this.props.questionId} placeholder={"Fill in the blank..."} />
                         {this.props.question.part2}
                     </div>
                 </div>}
 
                 {this.props.type === 'short' && <div className={classes.question}>
                     <div> <p>{this.props.question}</p>
-                        <textarea className={`${classes.radioButton} ${classes.textareaField}`} name={this.props.questionId} placeholder={"Type answer..."} />
+                        <textarea onChange={this.updateAnswer.bind(this)} className={`${classes.radioButton} ${classes.textareaField}`} name={this.props.questionId} placeholder={"Type answer..."} />
                     </div>
                 </div>}
             </React.Fragment>

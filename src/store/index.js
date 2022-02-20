@@ -1,6 +1,10 @@
 
 import {createStore} from 'redux';
 
+export const state = {
+    quizzes: []
+}
+
 const quizReducer = (state = {
     quizzes: []
 }, action) => {

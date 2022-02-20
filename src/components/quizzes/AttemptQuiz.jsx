@@ -3,13 +3,18 @@ import React, {Component} from "react";
 import {Row, Col, Button} from "react-bootstrap";
 import Question from "../questions/Question";
 import classes from './AttemptQuiz.module.css'
+import Toastify from "../../customUI/showToast/Toastify";
 
 class AttemptQuiz extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            quiz: {}
+            toast: {
+            show: false,
+                text: '',
+                type: '' // success | error
+            }
         }
     }
 
@@ -18,11 +23,67 @@ class AttemptQuiz extends Component {
         var quizId = params.slice(params.lastIndexOf('/')+1);
         var quizzes = JSON.parse(localStorage.getItem('quizzes'));
         var quiz = quizzes.filter((quiz) => quiz.quizId === quizId)[0];
-        this.setQuiz(quiz)
+        quiz.questions.forEach((question) => {
+            if(question.type === 'bool' && question?.getReason === true){
+                question['answer'] = '';
+                question['reason'] = '';
+            } else {
+                question['answer'] = '';
+            }
+        });
+        this.setQuiz(quiz);
+    }
+
+    async updateAnswer(index, answer){
+        var questions = this.state.questions;
+        questions[index].answer = answer;
+        await this.setState((prevState, props) => ({
+            questions: questions
+        }));
+
+    }
+
+    async updateReason(index, reason){
+        var questions = this.state.questions;
+        questions[index].reason = reason;
+        await this.setState((prevState, props) => ({
+            questions: questions
+        }));
     }
 
     async setQuiz(quiz){
         await this.setState((prevState, props) => (quiz));
+    }
+
+    submitQuiz(){
+        this.state.questions.forEach((question, index) => {
+           if(question.answer === ''){
+               this.showToast(`Please write answer for question no.${index+1}`, 'error');
+               return;
+           } else if(question.type === 'bool' && question.reason === ''){
+               this.showToast(`Please give a reason for your answer on question no.${index+1}`, 'error');
+               return;
+           }
+        });
+        this.goToHome();
+    }
+
+    showToast = async (text, type) => {
+        if(!this.state.toast.show){
+            await this.setState((prevState, props) => ({
+                toast: { show : true, text : text, type : type }
+            }));
+            setTimeout(async () => {
+                await this.setState((prevState, props) => ({
+                    toast: { show : false, text : '', type : '' }
+                }));
+            }, 3000);
+        }
+    }
+
+    goToHome(){
+        var navigator = document.getElementById("navigate");
+        navigator.click();
     }
 
     render() {
@@ -42,29 +103,61 @@ class AttemptQuiz extends Component {
                         {
                             this.state.questions && this.state.questions.map((question, index) => (
                                 <Col md={"12"} key={question.quizId}>
-                                    { (question.type === 'fillInBlank' || question.type === 'bool') ?
+                                    {   (question.type === 'fillInBlank') ?
                                         <Question key={question.questionId}
                                             type={question.type}
                                             questionNo={index + 1}
                                             question={question}
                                             marks={question.marks}
-                                            options={question.options}/>
-                                        : <Question key={question.questionId}
+                                            index={index}
+                                            updateAnswer={this.updateAnswer.bind(this)}
+                                        />
+                                        : (question.type === 'bool') ?
+                                        <Question key={question.questionId}
+                                            type={question.type}
+                                            questionNo={index + 1}
+                                            question={question}
+                                            index={index}
+                                            marks={question.marks}
+                                            updateAnswer={this.updateAnswer.bind(this)}
+                                            updateReason={this.updateReason.bind(this)}
+                                        />
+                                        : (question.type === 'short') ?
+                                        <Question key={question.questionId}
+                                              type={question.type}
+                                              questionNo={index + 1}
+                                              question={question.question}
+                                              index={index}
+                                              marks={question.marks}
+                                              updateAnswer={this.updateAnswer.bind(this)}
+                                        />
+                                        :<Question key={question.questionId}
                                             type={question.type}
                                             questionNo={index + 1}
                                             question={question.question}
                                             marks={question.marks}
-                                            options={question.options}/>}
+                                            index={index}
+                                            options={question.options}
+                                            updateAnswer={this.updateAnswer.bind(this)}
+                                        />
+                                    }
                                 </Col>
                             ))
                         }
                     </Row>
                     <Row className={classes.buttonRow}>
                         <Col md={"6"}>
-                            <Button className={classes.submitButton} onClick={()=> {}}>Submit Quiz</Button>
+                            <Button className={classes.submitButton} onClick={()=> {this.submitQuiz()}}>Submit Quiz</Button>
                         </Col>
                     </Row>
                 </div>
+                { this.state.toast.show && <Toastify
+                    type={this.state.toast.type}
+                    show={this.state.toast.show}
+                    text={this.state.toast.text}
+                    delay={3000}/>
+                }
+                <a id={"navigate"} href={"/"}/>
             </React.Fragment>
         );
     }

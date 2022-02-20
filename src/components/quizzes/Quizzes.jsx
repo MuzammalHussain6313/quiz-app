@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import classes from './Quizzes.module.css';
 import {Col, Row, Container} from "react-bootstrap";
 import Toastify from "../../customUI/showToast/Toastify";
+import { getQuizzes, state } from "../../api";
 
 class Quizzes extends Component {
 
@@ -9,46 +10,7 @@ class Quizzes extends Component {
         super(props);
         this.state = {
             quizId: '',
-            previousQuizzes: [
-                // {
-                //     id: '874t5w8f385845t98w',
-                //     quizNo: 1,
-                //     name: 'Chapter 1',
-                //     description: 'This will not included in finals',
-                //     questions: [
-                //         {
-                //             questionId: '8b734t58795897tf4bg78',
-                //             question: 'When Pakistan Came into being?',
-                //             type: 'mcq',
-                //             options: [{checked: false, text: '1847'}, {checked: false, text: '1945'}, {
-                //                 checked: false,
-                //                 text: '1947'
-                //             }, {checked: false, text: '1949'}]
-                //         }
-                //     ]
-                // },
-                // {
-                //     id: '874t5w8f385845t99w',
-                //     quizNo: 2,
-                //     name: 'Chapter 2',
-                //     description: 'This will included in finals',
-                //     questions: []
-                // },
-                // {
-                //     id: '874t5w8f385845t100w',
-                //     quizNo: 3,
-                //     name: 'Chapter 3',
-                //     description: 'For general informations and this will not included in finals.',
-                //     questions: []
-                // },
-                // {
-                //     id: '874t5w8f385845t908w',
-                //     quizNo: 4,
-                //     name: 'chapter 5',
-                //     description: 'chapter 5 will added in quizzes but not included in finals',
-                //     questions: []
-                // }
-            ],
+            previousQuizzes: [],
             upcomingQuizzes: [],
             toast: {
                 show: false,
@@ -59,6 +21,9 @@ class Quizzes extends Component {
     }
 
     componentDidMount() {
+        console.log( getQuizzes());
+        state.test = '1234567890';
+        console.log(state);
         var quizzes = JSON.parse(localStorage.getItem('quizzes'));
         var previousQuizzes = [];
         var upcomingQuizzes = [];
@@ -94,11 +59,11 @@ class Quizzes extends Component {
         }
         const varDate = new Date(quiz.date);
         const today = new Date();
-        if (varDate.toDateString() === today.toDateString() && this.checkTime(quiz.time)) {
+        // if (varDate.toDateString() === today.toDateString() && this.checkTime(quiz.time)) {
             this.openQuiz(quiz);
-        } else {
-            this.showToast('Please wait until quiz time start. Thanks', 'error');
-        }
+        // } else {
+        //     this.showToast('Please wait until quiz time start. Thanks', 'error');
+        // }
     }
 
     async openQuiz(quiz) {

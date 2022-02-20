@@ -4,6 +4,8 @@ import AddQuestion from '../quizzes/AddQuestion';
 import Question from "../questions/Question";
 import {Col, Row} from "react-bootstrap";
 import Toastify from "../../customUI/showToast/Toastify";
+import {state} from "../../api";
+
 
 class AddQuiz extends Component{
 
@@ -26,6 +28,10 @@ class AddQuiz extends Component{
         this.date = React.createRef();
         this.time = React.createRef();
         this.totalMarks = React.createRef();
+    }
+
+    componentDidMount() {
+        console.log('state' , state);
     }
 
     addQuiz(event) {

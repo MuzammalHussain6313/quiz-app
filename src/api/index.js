@@ -2,12 +2,19 @@
 const base_url = '';
 
 export const state = {
-    test: ''
+    test: '',
+    quizzes: []
 }
 
 export const getQuizzes = () => {
-    return [{
-        name: 'ali',
-        url: base_url
-    }]
+    return state.quizzes;
+    // return [{
+    //     name: 'ali',
+    //     url: base_url
+    // }]
+}
+
+export const setQuiz = (quiz) => {
+    state.quizzes.push(quiz);
+    debugger
 }

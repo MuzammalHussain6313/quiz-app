@@ -27,7 +27,7 @@ class Quizzes extends Component {
         var quizzes = JSON.parse(localStorage.getItem('quizzes'));
         var previousQuizzes = [];
         var upcomingQuizzes = [];
-        if(quizzes.length > 0) {
+        if(quizzes?.length > 0) {
             quizzes.forEach((quiz) => {
                 this.isTimePassed(`${quiz.date} ${quiz.time}`) ? previousQuizzes.push(quiz) : upcomingQuizzes.push(quiz);
             });

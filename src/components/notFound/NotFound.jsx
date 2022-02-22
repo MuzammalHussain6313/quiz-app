@@ -1,4 +1,7 @@
 import React, {Component} from "react";
+import {bindActionCreators} from "redux";
+import {setQuizList} from "../../store/actions/actions";
+import {connect} from "react-redux";
 
 class NotFound extends Component {
     render() {
@@ -9,5 +12,17 @@ class NotFound extends Component {
         )
     };
 }
+const mapStateToProps = (state) => {
+    debugger
+    return {
+        quizList: state.quizReducer.quizzes
+    }
+}
+const mapDispatchToProps = (dispatch) => {
 
-export default NotFound;
+    return bindActionCreators({
+        setQuizzes: (list) => setQuizList(list),
+    }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NotFound);

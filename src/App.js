@@ -15,6 +15,17 @@ class App extends Component {
         super(props);
     }
 
+    componentDidMount() {
+        if (window.performance) {
+            if (performance.navigation.type === 1) {
+                if (window.confirm("Do you want to save your changes?")) {
+
+                } else {
+                }
+            }
+        }
+    }
+
     render() {
         return (
             <div className="App">

@@ -4,10 +4,14 @@ import AddQuestion from '../quizzes/AddQuestion';
 import Question from "../questions/Question";
 import {Col, Row} from "react-bootstrap";
 import Toastify from "../../customUI/showToast/Toastify";
-import {state} from "../../api";
+import {getQuizzes, setQuiz, state} from "../../api";
+import {connect} from "react-redux";
+import {setQuizList} from "../../store/actions/actions";
+import {bindActionCreators} from "redux";
+import {Link, Navigate, Route} from "react-router-dom";
+import Quizzes from "./Quizzes";
 
-
-class AddQuiz extends Component{
+class AddQuiz extends Component {
 
     constructor(props) {
         super(props);
@@ -20,7 +24,10 @@ class AddQuiz extends Component{
                 show: false,
                 text: '',
                 type: '' // success | error
-            }
+            },
+            quiz: {},
+            redirect: false,
+            path: '/'
         };
         this.questionType = React.createRef();
         this.form = React.createRef();
@@ -31,20 +38,26 @@ class AddQuiz extends Component{
     }
 
     componentDidMount() {
-        console.log('state' , state);
+        // setTimeout(() => {
+        //     var quizzes = JSON.parse(localStorage.getItem('quizzes'));
+        //     console.log('quiz list', this.props.quizList);
+        //     this.props.setQuizzes(quizzes);
+        //     console.log('quiz list', this.props.quizList);
+        //     this.goBack();
+        // }, 2000);
     }
 
     addQuiz(event) {
         event.preventDefault();
-        if(this.state.questions.length === 0){
+        if (this.state.questions.length === 0) {
             this.showToast('No question added to the quiz. Please add questions to add quiz.', 'error');
             return;
-        } else if(this.state.marks !== parseInt(this.totalMarks.current.value)) {
+        } else if (this.state.marks !== parseInt(this.totalMarks.current.value)) {
             this.showToast('The total of marks of questions should be equal to quiz marks.', 'error');
             return;
         }
 
-        var quiz = {
+        this.state.quiz = {
             quizId: `quizId_${Math.random()}`,
             title: this.title.current.value,
             totalMarks: this.totalMarks.current.value,
@@ -54,58 +67,67 @@ class AddQuiz extends Component{
         };
         var quizzes = JSON.parse(localStorage.getItem('quizzes'));
         if (quizzes) {
-            quizzes.push(quiz);
+            quizzes.push(this.state.quiz);
         } else {
-            quizzes = [quiz];
+            quizzes = [this.state.quiz];
         }
-        localStorage.setItem('quizzes', JSON.stringify(quizzes));
-        this.goToHome();
+        this.props.setQuizzes(quizzes);
+        this.goBack();
+    }
+
+    async goBack() {
+        await this.setState((prevState, props) => ({
+            redirect: true,
+            path: '/quizzes'
+        }));
     }
 
     async showHideQuestions() {
-        await this.setState( {
+        await this.setState({
             showQuestions: !this.state.showQuestions
-        }, () => {});
+        }, () => {
+        });
     }
 
     async addQuestion(question) {
-        await this.setState( {
+        await this.setState({
             questions: [...this.state.questions, question],
             marks: this.state.marks + parseInt(question.marks)
-        }, () => {});
+        }, () => {
+        });
         console.log(this.state);
-        await this.setState( {
+        await this.setState({
             type: ''
         }, () => {
         });
     }
 
     typeChanged = event => {
-        this.setState({ type: event.target.value });
+        this.setState({type: event.target.value});
     }
 
     showToast = async (text, type) => {
-        if(!this.state.toast.show){
+        if (!this.state.toast.show) {
             await this.setState((prevState, props) => ({
-                toast: { show : true, text : text, type : type }
+                toast: {show: true, text: text, type: type}
             }));
             setTimeout(async () => {
                 await this.setState((prevState, props) => ({
-                    toast: { show : false, text : '', type : '' }
+                    toast: {show: false, text: '', type: ''}
                 }));
             }, 3000);
         }
     }
 
     getMinDate() {
-        var month = `${new Date().getMonth()+1 >= 10 ? new Date().getMonth()+1:`0${new Date().getMonth()+1}`}`;
-        var date = `${new Date().getDate() >= 10 ? new Date().getDate():`0${new Date().getDate()}`}`;
+        var month = `${new Date().getMonth() + 1 >= 10 ? new Date().getMonth() + 1 : `0${new Date().getMonth() + 1}`}`;
+        var date = `${new Date().getDate() >= 10 ? new Date().getDate() : `0${new Date().getDate()}`}`;
         return `${new Date().getFullYear()}-${month}-${date}`;
     }
 
     getMaxDate() {
-        var month = `${new Date().getMonth()+1 >= 10 ? new Date().getMonth()+1:`0${new Date().getMonth()+1}`}`;
-        var date = `${new Date().getDate() >= 10 ? new Date().getDate():`0${new Date().getDate()}`}`;
+        var month = `${new Date().getMonth() + 1 >= 10 ? new Date().getMonth() + 1 : `0${new Date().getMonth() + 1}`}`;
+        var date = `${new Date().getDate() >= 10 ? new Date().getDate() : `0${new Date().getDate()}`}`;
         return `${new Date().getFullYear() + 1}-${month}-${date}`;
     }
 
@@ -117,34 +139,34 @@ class AddQuiz extends Component{
         return sum;
     }
 
-    goToHome(){
-        var navigator = document.getElementById("navigate");
-        navigator.click();
-    }
-
-    render (){
-        return (
+    render() {
+        return this.state.redirect ? <Navigate to={this.state.path} /> : (
             <div className="body">
                 <h2>Add New Quiz</h2>
                 <form id={"quizForm"} className={classes.form} ref={this.form} onSubmit={this.addQuiz.bind(this)}>
                     <div className={classes.fieldContainer}>
-                        <input ref={this.title} required={true} maxLength={50} minLength={10} className={classes.inputField} type="text" id="quizTitle" placeholder="Quiz Title"/>
+                        <input ref={this.title} required={true} maxLength={50} minLength={10}
+                               className={classes.inputField} type="text" id="quizTitle" placeholder="Quiz Title"/>
                     </div>
 
                     <div className={classes.fieldContainer}>
-                        <input ref={this.totalMarks} required={true} max={100} min={5} className={classes.inputField} type="number" id="marks" placeholder="Total Marks"/>
+                        <input ref={this.totalMarks} required={true} max={100} min={5} className={classes.inputField}
+                               type="number" id="marks" placeholder="Total Marks"/>
                     </div>
 
                     <div className={classes.fieldContainer}>
-                        <input ref={this.date} required={true} max={this.getMaxDate()} min={this.getMinDate()} className={classes.inputField} type="date" id="date" placeholder="Date"/>
+                        <input ref={this.date} required={true} max={this.getMaxDate()} min={this.getMinDate()}
+                               className={classes.inputField} type="date" id="date" placeholder="Date"/>
                     </div>
 
                     <div className={classes.fieldContainer}>
-                        <input ref={this.time} required={true} className={classes.inputField} type="time" id="time" placeholder="Start Time"/>
+                        <input ref={this.time} required={true} className={classes.inputField} type="time" id="time"
+                               placeholder="Start Time"/>
                     </div>
 
                     <div className={classes.fieldContainer}>
-                        <select value={this.state.type} onChange={this.typeChanged} className={classes.inputField} name="questionType" id="time"
+                        <select value={this.state.type} onChange={this.typeChanged} className={classes.inputField}
+                                name="questionType" id="time"
                                 placeholder="Question Type">
                             <option value="">-- Select --</option>
                             <option value="mcq">MCQs</option>
@@ -160,32 +182,38 @@ class AddQuiz extends Component{
 
                 </form>
 
-                {this.state.type !== '' && <AddQuestion sumitQuestion={this.addQuestion.bind(this)} type={this.state.type}/>}
+                {this.state.type !== '' &&
+                    <AddQuestion sumitQuestion={this.addQuestion.bind(this)} type={this.state.type}/>}
 
-                {this.state.questions.length>0 && <div className={classes.questions}>
+                {this.state.questions.length > 0 && <div className={classes.questions}>
                     <Row>
                         <Col><h3>Questions Preview: </h3></Col>
                         <Col className={classes.iconCol}>
-                            { this.state.showQuestions && <img className={classes.icons} onClick={this.showHideQuestions.bind(this)} src="/icons/down.svg" alt="image" />}
-                            { !this.state.showQuestions && <img className={classes.icons} onClick={this.showHideQuestions.bind(this)} src="/icons/forward.svg" alt="image" />}
+                            {this.state.showQuestions &&
+                                <img className={classes.icons} onClick={this.showHideQuestions.bind(this)}
+                                     src="/icons/down.svg" alt="image"/>}
+                            {!this.state.showQuestions &&
+                                <img className={classes.icons} onClick={this.showHideQuestions.bind(this)}
+                                     src="/icons/forward.svg" alt="image"/>}
                         </Col>
                     </Row>
-                    { this.state.showQuestions &&
+                    {this.state.showQuestions &&
                         this.state.questions.map((question, index) => (
-                            <div>
-                                { (question.type === 'fillInBlank' || question.type === 'bool') ? <Question key={question.questionId}
-                                    type={question.type}
-                                    questionNo={index + 1}
-                                    question={question}
-                                    marks={question.marks}
-                                    options={question.options}/>
-                                : <Question key={question.questionId}
-                                    type={question.type}
-                                    questionNo={index + 1}
-                                    question={question.question}
-                                    marks={question.marks}
-                                    options={question.options}/>}
-                            </div>
+                                <div>
+                                    {(question.type === 'fillInBlank' || question.type === 'bool') ?
+                                        <Question key={question.questionId}
+                                                  type={question.type}
+                                                  questionNo={index + 1}
+                                                  question={question}
+                                                  marks={question.marks}
+                                                  options={question.options}/>
+                                        : <Question key={question.questionId}
+                                                    type={question.type}
+                                                    questionNo={index + 1}
+                                                    question={question.question}
+                                                    marks={question.marks}
+                                                    options={question.options}/>}
+                                </div>
                             )
                         )
                     }
@@ -194,17 +222,29 @@ class AddQuiz extends Component{
                         <Col xs={"3"} className={classes.marksCol}><p>{this.getTotalMarks()}</p></Col>
                     </Row>
                 </div>}
-                { this.state.toast.show &&
+                {this.state.toast.show &&
                     <Toastify
                         type={this.state.toast.type}
                         show={this.state.toast.show}
                         text={this.state.toast.text}
                         delay={3000}/>
                 }
-                <a id={"navigate"} href={"/"}/>
             </div>
         );
     }
 }
 
-export default AddQuiz;
+const mapStateToProps = (state) => {
+    return {
+        quizList: state.quizReducer.quizzes
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+
+    return bindActionCreators({
+        setQuizzes: (list) => setQuizList(list),
+    }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AddQuiz);

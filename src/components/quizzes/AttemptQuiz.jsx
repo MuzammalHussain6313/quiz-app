@@ -4,6 +4,9 @@ import {Row, Col, Button} from "react-bootstrap";
 import Question from "../questions/Question";
 import classes from './AttemptQuiz.module.css'
 import Toastify from "../../customUI/showToast/Toastify";
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
+import {Navigate} from "react-router-dom";
 
 class AttemptQuiz extends Component {
 
@@ -14,24 +17,28 @@ class AttemptQuiz extends Component {
             show: false,
                 text: '',
                 type: '' // success | error
-            }
+            },
+            redirect: false,
+            path: '/'
         }
     }
 
     componentDidMount() {
         const params = window.location.pathname;
         var quizId = params.slice(params.lastIndexOf('/')+1);
-        var quizzes = JSON.parse(localStorage.getItem('quizzes'));
-        var quiz = quizzes.filter((quiz) => quiz.quizId === quizId)[0];
-        quiz.questions.forEach((question) => {
-            if(question.type === 'bool' && question?.getReason === true){
-                question['answer'] = '';
-                question['reason'] = '';
-            } else {
-                question['answer'] = '';
-            }
-        });
-        this.setQuiz(quiz);
+        var quizzes = this.props.quizzes;
+        if(quizzes.length > 0) {
+            var quiz = quizzes.filter((quiz) => quiz.quizId === quizId)[0];
+            quiz.questions.forEach((question) => {
+                if (question.type === 'bool' && question?.getReason === true) {
+                    question['answer'] = '';
+                    question['reason'] = '';
+                } else {
+                    question['answer'] = '';
+                }
+            });
+            this.setQuiz(quiz);
+        }
     }
 
     async updateAnswer(index, answer){
@@ -40,7 +47,6 @@ class AttemptQuiz extends Component {
         await this.setState((prevState, props) => ({
             questions: questions
         }));
-
     }
 
     async updateReason(index, reason){
@@ -81,13 +87,15 @@ class AttemptQuiz extends Component {
         }
     }
 
-    goToHome(){
-        var navigator = document.getElementById("navigate");
-        navigator.click();
+    async goToHome(){
+        await this.setState((prevSate, props) => ({
+            redirect: true,
+            path: '/quizzes'
+        }))
     }
 
     render() {
-        return (
+        return this.state.redirect ? <Navigate to={this.state.path} /> : (
             <React.Fragment>
                 <div className="body">
                     <Row className={classes.header}>
@@ -157,10 +165,21 @@ class AttemptQuiz extends Component {
                     text={this.state.toast.text}
                     delay={3000}/>
                 }
-                <a id={"navigate"} href={"/"}/>
             </React.Fragment>
         );
     }
 }
 
-export default AttemptQuiz;
+const mapStateToProps = (state) => {
+    return {
+        quizzes: state.quizReducer.quizzes
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+
+    return bindActionCreators({
+    }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AttemptQuiz);

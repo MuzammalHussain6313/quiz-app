@@ -8,10 +8,6 @@ export const state = {
 
 export const getQuizzes = () => {
     return state.quizzes;
-    // return [{
-    //     name: 'ali',
-    //     url: base_url
-    // }]
 }
 
 export const setQuiz = (quiz) => {

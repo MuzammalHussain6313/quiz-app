@@ -4,12 +4,10 @@ import AddQuestion from '../quizzes/AddQuestion';
 import Question from "../questions/Question";
 import {Col, Row} from "react-bootstrap";
 import Toastify from "../../customUI/showToast/Toastify";
-import {getQuizzes, setQuiz, state} from "../../api";
 import {connect} from "react-redux";
 import {setQuizList} from "../../store/actions/actions";
 import {bindActionCreators} from "redux";
-import {Link, Navigate, Route} from "react-router-dom";
-import Quizzes from "./Quizzes";
+import { Navigate } from "react-router-dom";
 
 class AddQuiz extends Component {
 
@@ -38,13 +36,6 @@ class AddQuiz extends Component {
     }
 
     componentDidMount() {
-        // setTimeout(() => {
-        //     var quizzes = JSON.parse(localStorage.getItem('quizzes'));
-        //     console.log('quiz list', this.props.quizList);
-        //     this.props.setQuizzes(quizzes);
-        //     console.log('quiz list', this.props.quizList);
-        //     this.goBack();
-        // }, 2000);
     }
 
     addQuiz(event) {
@@ -65,17 +56,18 @@ class AddQuiz extends Component {
             time: this.time.current.value,
             questions: this.state.questions
         };
-        var quizzes = JSON.parse(localStorage.getItem('quizzes'));
-        if (quizzes) {
+        var quizzes = this.props.quizzes;
+        if (quizzes.length>0) {
             quizzes.push(this.state.quiz);
         } else {
             quizzes = [this.state.quiz];
         }
         this.props.setQuizzes(quizzes);
-        this.goBack();
+        localStorage.setItem('quizzes', JSON.stringify(quizzes));
+        this.openQuizzes();
     }
 
-    async goBack() {
+    async openQuizzes() {
         await this.setState((prevState, props) => ({
             redirect: true,
             path: '/quizzes'
@@ -236,7 +228,7 @@ class AddQuiz extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        quizList: state.quizReducer.quizzes
+        quizzes: state.quizReducer.quizzes
     }
 }
 

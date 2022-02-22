@@ -2,37 +2,39 @@ import React, {Component} from 'react';
 import classes from './Quizzes.module.css';
 import {Col, Row, Container} from "react-bootstrap";
 import Toastify from "../../customUI/showToast/Toastify";
-import { getQuizzes, state } from "../../api";
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
+import {Navigate} from "react-router-dom";
 
 class Quizzes extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            quizId: '',
             previousQuizzes: [],
             upcomingQuizzes: [],
             toast: {
                 show: false,
                 text: '',
                 type: '' // success | error
-            }
+            },
+            redirect: false,
+            path: '/'
         }
     }
 
     componentDidMount() {
-        console.log( getQuizzes());
-        state.test = '1234567890';
-        console.log(state);
-        var quizzes = JSON.parse(localStorage.getItem('quizzes'));
-        var previousQuizzes = [];
-        var upcomingQuizzes = [];
-        if(quizzes?.length > 0) {
-            quizzes.forEach((quiz) => {
-                this.isTimePassed(`${quiz.date} ${quiz.time}`) ? previousQuizzes.push(quiz) : upcomingQuizzes.push(quiz);
-            });
-        }
-        this.setQuizzes(upcomingQuizzes, previousQuizzes);
+        setTimeout(() => {
+            var quizzes = this.props.quizzes;
+            var previousQuizzes = [];
+            var upcomingQuizzes = [];
+            if(quizzes?.length > 0) {
+                quizzes.forEach((quiz) => {
+                    this.isTimePassed(`${quiz.date} ${quiz.time}`) ? previousQuizzes.push(quiz) : upcomingQuizzes.push(quiz);
+                });
+            }
+            this.setQuizzes(upcomingQuizzes, previousQuizzes);
+        }, 200);
     }
 
     async setQuizzes(upcomingQuizzes, previousQuizzes) {
@@ -59,20 +61,20 @@ class Quizzes extends Component {
         }
         const varDate = new Date(quiz.date);
         const today = new Date();
-        // if (varDate.toDateString() === today.toDateString() && this.checkTime(quiz.time)) {
+        if (varDate.toDateString() === today.toDateString() && this.checkTime(quiz.time)) {
             this.openQuiz(quiz);
-        // } else {
-        //     this.showToast('Please wait until quiz time start. Thanks', 'error');
-        // }
+        } else {
+            this.showToast('Please wait until quiz time start. Thanks', 'error');
+        }
     }
 
     async openQuiz(quiz) {
         await this.setState((prevState, props) => ({
-            quizId: quiz.quizId
+            redirect: true,
+            path: `/quizzes/${quiz.quizId}`
         }));
-        var navigator = document.getElementById("navigate");
-        navigator.click();
     }
+
 
     checkTime(time) {
         const qhours = parseInt(time.split(':')[0]);
@@ -103,7 +105,7 @@ class Quizzes extends Component {
 
     render() {
 
-        return (
+        return this.state.redirect ? <Navigate to={this.state.path} /> : (
             <React.Fragment>
                 {
                     <Container className="body">
@@ -150,10 +152,21 @@ class Quizzes extends Component {
                         text={this.state.toast.text}
                         delay={3000}/>
                 }
-                <a id={"navigate"} href={`/quizzes/${this.state.quizId}`}/>
             </React.Fragment>
         )
     };
 }
 
-export default Quizzes;
+const mapStateToProps = (state) => {
+    return {
+        quizzes: state.quizReducer.quizzes
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+
+    return bindActionCreators({
+    }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Quizzes);

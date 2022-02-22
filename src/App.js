@@ -8,6 +8,9 @@ import AttemptQuiz from './components/quizzes/AttemptQuiz';
 import AddQuiz from './components/quizzes/AddQuiz';
 import {Component} from "react";
 import classes from './App.css';
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
+import {setQuizList} from "./store/actions/actions";
 
 class App extends Component {
 
@@ -16,14 +19,13 @@ class App extends Component {
     }
 
     componentDidMount() {
-        if (window.performance) {
-            if (performance.navigation.type === 1) {
-                if (window.confirm("Do you want to save your changes?")) {
+        this.setQuizzes();
+    }
 
-                } else {
-                }
-            }
-        }
+    async setQuizzes() {
+        var quizzes = [];
+        quizzes = JSON.parse(localStorage.getItem('quizzes'));
+        if(quizzes.length> 0) await this.props.setQuizzes(quizzes);
     }
 
     render() {
@@ -47,4 +49,16 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapStateToProps = (state) => {
+    return {
+        quizzes: state.quizReducer.quizzes
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        setQuizzes: (list) => setQuizList(list),
+    }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

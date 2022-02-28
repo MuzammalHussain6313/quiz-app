@@ -8,6 +8,7 @@ import {connect} from "react-redux";
 import {setQuizList} from "../../store/actions/actions";
 import {bindActionCreators} from "redux";
 import { Navigate } from "react-router-dom";
+import {addQuiz, setQuiz} from "../../api";
 
 class AddQuiz extends Component {
 
@@ -25,7 +26,8 @@ class AddQuiz extends Component {
             },
             quiz: {},
             redirect: false,
-            path: '/'
+            path: '/',
+            loading: false
         };
         this.questionType = React.createRef();
         this.form = React.createRef();
@@ -36,9 +38,10 @@ class AddQuiz extends Component {
     }
 
     componentDidMount() {
+
     }
 
-    addQuiz(event) {
+    async addQuiz(event) {
         event.preventDefault();
         if (this.state.questions.length === 0) {
             this.showToast('No question added to the quiz. Please add questions to add quiz.', 'error');
@@ -64,6 +67,11 @@ class AddQuiz extends Component {
         }
         this.props.setQuizzes(quizzes);
         localStorage.setItem('quizzes', JSON.stringify(quizzes));
+        await this.setState((prevState, props) => ({
+            loading: true,
+        }));
+        console.log('fhuorihtuioheruio');
+        await addQuiz(this.state.quiz);
         this.openQuizzes();
     }
 
@@ -219,7 +227,13 @@ class AddQuiz extends Component {
                         type={this.state.toast.type}
                         show={this.state.toast.show}
                         text={this.state.toast.text}
-                        delay={3000}/>
+                        delay={3000}/>}
+                {this.state.loading &&
+                    <Toastify
+                    type={'success'}
+                    show={true}
+                    text={"Saving data..."}
+                    delay={3000}/>
                 }
             </div>
         );

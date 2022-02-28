@@ -11,6 +11,7 @@ import classes from './App.css';
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {setQuizList} from "./store/actions/actions";
+import database, {writeUserData} from "./api/index";
 
 class App extends Component {
 
@@ -20,6 +21,8 @@ class App extends Component {
 
     componentDidMount() {
         this.setQuizzes();
+        // console.log('db: ', database);
+        // writeUserData('5676576', 'muzammil', 'hmuzammal015@gmail.com', 'ghytf');
     }
 
     async setQuizzes() {

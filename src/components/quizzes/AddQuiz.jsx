@@ -8,7 +8,8 @@ import {connect} from "react-redux";
 import {setQuizList} from "../../store/actions/actions";
 import {bindActionCreators} from "redux";
 import { Navigate } from "react-router-dom";
-import {addQuiz, setQuiz} from "../../api";
+import {addQuiz} from "../../api";
+import firebase from "firebase";
 
 class AddQuiz extends Component {
 
@@ -52,7 +53,7 @@ class AddQuiz extends Component {
         }
 
         this.state.quiz = {
-            quizId: `quizId_${Math.random()}`,
+            key: firebase.database().ref('quizzes').push().key,
             title: this.title.current.value,
             totalMarks: this.totalMarks.current.value,
             date: this.date.current.value,
@@ -66,11 +67,9 @@ class AddQuiz extends Component {
             quizzes = [this.state.quiz];
         }
         this.props.setQuizzes(quizzes);
-        localStorage.setItem('quizzes', JSON.stringify(quizzes));
         await this.setState((prevState, props) => ({
             loading: true,
         }));
-        console.log('fhuorihtuioheruio');
         await addQuiz(this.state.quiz);
         this.openQuizzes();
     }

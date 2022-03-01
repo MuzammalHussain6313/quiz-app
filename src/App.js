@@ -11,7 +11,7 @@ import classes from './App.css';
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {setQuizList} from "./store/actions/actions";
-import database, {writeUserData} from "./api/index";
+import {getQuizzes} from "./api/index";
 
 class App extends Component {
 
@@ -21,13 +21,11 @@ class App extends Component {
 
     componentDidMount() {
         this.setQuizzes();
-        // console.log('db: ', database);
-        // writeUserData('5676576', 'muzammil', 'hmuzammal015@gmail.com', 'ghytf');
     }
 
     async setQuizzes() {
-        var quizzes = [];
-        quizzes = JSON.parse(localStorage.getItem('quizzes'));
+        var quizzes = await getQuizzes();
+        // quizzes = JSON.parse(localStorage.getItem('quizzes'));
         if(quizzes.length> 0) await this.props.setQuizzes(quizzes);
     }
 
@@ -54,7 +52,6 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
     return {
-        quizzes: state.quizReducer.quizzes
     }
 }
 

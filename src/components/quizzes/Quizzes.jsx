@@ -24,6 +24,10 @@ class Quizzes extends Component {
     }
 
     componentDidMount() {
+        this.loadQuizzes();
+    }
+
+    async loadQuizzes(){
         setTimeout(() => {
             var quizzes = this.props.quizzes;
             var previousQuizzes = [];
@@ -34,7 +38,7 @@ class Quizzes extends Component {
                 });
             }
             this.setQuizzes(upcomingQuizzes, previousQuizzes);
-        }, 200);
+        }, 400);
     }
 
     async setQuizzes(upcomingQuizzes, previousQuizzes) {
@@ -56,22 +60,22 @@ class Quizzes extends Component {
 
     async attemptQuiz(quiz, isPrevious) {
         if(isPrevious) {
-            this.openQuiz(quiz);
+            this.openQuiz(quiz, 1);
             return
         }
         const varDate = new Date(quiz.date);
         const today = new Date();
         if (varDate.toDateString() === today.toDateString() && this.checkTime(quiz.time)) {
-            this.openQuiz(quiz);
+            this.openQuiz(quiz, 0);
         } else {
             this.showToast('Please wait until quiz time start. Thanks', 'error');
         }
     }
 
-    async openQuiz(quiz) {
+    async openQuiz(quiz, isPrevious) {
         await this.setState((prevState, props) => ({
             redirect: true,
-            path: `/quizzes/${quiz.quizId}`
+            path: `/quizzes/${isPrevious}${quiz.key}`
         }));
     }
 

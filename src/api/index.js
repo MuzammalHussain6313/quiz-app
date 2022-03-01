@@ -26,14 +26,31 @@ export const state = {
 
 export const addQuiz = async (quiz) => {
     var key = firebase.database().ref('quizzes').push().key;
-    console.log(key);
     await firebase.database().ref(`quizzes/${key}`).set(quiz).then(res => {
         console.log('data pushed');
     });
 }
 
-export const getQuizzes = () => {
-    return state.quizzes;
+export const getQuizzes = async () => {
+    var quizzes = [];
+    await firebase.database().ref('quizzes').once('value', snapshot => {
+        snapshot.forEach((node) => {
+            const quiz = node.val();
+            quizzes.push(quiz);
+        });
+    }).then(res => {
+    }).catch(err => {
+        console.log(err);
+    });
+    return quizzes;
+}
+
+export const addAttemptedQuizzes = async (markedQuiz) => {
+    const key = await firebase.database().ref('/attemptQuizzes').push().key;
+    markedQuiz.key = key;
+    await firebase.database().ref(`/attemptQuizzes/${key}`).set(markedQuiz)
+    .then(res => {}).catch(err => console.log(err));
+    return "success";
 }
 
 export const getNews = async () => {

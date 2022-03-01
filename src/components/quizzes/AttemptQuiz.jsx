@@ -7,6 +7,7 @@ import Toastify from "../../customUI/showToast/Toastify";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {Navigate} from "react-router-dom";
+import {addAttemptedQuizzes} from "../../api";
 
 class AttemptQuiz extends Component {
 
@@ -19,16 +20,21 @@ class AttemptQuiz extends Component {
                 type: '' // success | error
             },
             redirect: false,
-            path: '/'
+            path: '/',
+            quizId: '',
+            quiz: {},
+            isPrevious: true,
         }
     }
 
     componentDidMount() {
         const params = window.location.pathname;
         var quizId = params.slice(params.lastIndexOf('/')+1);
+        this.setIsPrevious(parseInt(quizId[0]));
+        quizId = params.slice(params.lastIndexOf('/')+2);
         var quizzes = this.props.quizzes;
         if(quizzes.length > 0) {
-            var quiz = quizzes.filter((quiz) => quiz.quizId === quizId)[0];
+            var quiz = quizzes.filter((quiz) => quiz.key === quizId)[0];
             quiz.questions.forEach((question) => {
                 if (question.type === 'bool' && question?.getReason === true) {
                     question['answer'] = '';
@@ -41,8 +47,14 @@ class AttemptQuiz extends Component {
         }
     }
 
+    async setIsPrevious(value){
+        console.log(typeof value);
+        console.log(value);
+        await this.setState((prevState, props) => ({isPrevious: value == 1 ? true : false}));
+    }
+
     async updateAnswer(index, answer){
-        var questions = this.state.questions;
+        var questions = this.state.quiz.questions;
         questions[index].answer = answer;
         await this.setState((prevState, props) => ({
             questions: questions
@@ -50,7 +62,7 @@ class AttemptQuiz extends Component {
     }
 
     async updateReason(index, reason){
-        var questions = this.state.questions;
+        var questions = this.state.quiz.questions;
         questions[index].reason = reason;
         await this.setState((prevState, props) => ({
             questions: questions
@@ -58,11 +70,11 @@ class AttemptQuiz extends Component {
     }
 
     async setQuiz(quiz){
-        await this.setState((prevState, props) => (quiz));
+        await this.setState((prevState, props) => ({quiz: quiz}));
     }
 
-    submitQuiz(){
-        this.state.questions.forEach((question, index) => {
+    async submitQuiz(){
+        this.state.quiz.questions.forEach((question, index) => {
            if(question.answer === ''){
                this.showToast(`Please write answer for question no.${index+1}`, 'error');
                return;
@@ -71,7 +83,10 @@ class AttemptQuiz extends Component {
                return;
            }
         });
-        this.goToHome();
+        console.log("questions with answers: ", this.state);
+        await addAttemptedQuizzes(this.state.quiz).then(() => {
+            this.goToHome();
+        });
     }
 
     showToast = async (text, type) => {
@@ -109,7 +124,7 @@ class AttemptQuiz extends Component {
                     </Row>
                     <Row className={classes.questions}>
                         {
-                            this.state.questions && this.state.questions.map((question, index) => (
+                            this.state.quiz.questions && this.state.quiz.questions.map((question, index) => (
                                 <Col md={"12"} key={question.quizId}>
                                     {   (question.type === 'fillInBlank') ?
                                         <Question key={question.questionId}
@@ -155,7 +170,7 @@ class AttemptQuiz extends Component {
                     </Row>
                     <Row className={classes.buttonRow}>
                         <Col md={"6"}>
-                            <Button className={classes.submitButton} onClick={()=> {this.submitQuiz()}}>Submit Quiz</Button>
+                            { !this.state.isPrevious && <Button className={classes.submitButton} onClick={()=> {this.submitQuiz()}}>Submit Quiz</Button>}
                         </Col>
                     </Row>
                 </div>

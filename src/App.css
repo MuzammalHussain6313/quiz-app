@@ -6,6 +6,8 @@
 
 .body {
   padding-top: 90px;
+  background: gray;
+  height: 100vh;
 }
 
 .App-logo {

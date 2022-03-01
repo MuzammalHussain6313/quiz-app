@@ -12,15 +12,46 @@ import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {setQuizList} from "./store/actions/actions";
 import {getQuizzes} from "./api/index";
+import Login from "./authentication/login/login";
+import SignUp from "./authentication/signup/signup";
 
 class App extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            isLoggedIn: false,
+            path: '',
+        }
     }
 
     componentDidMount() {
-        this.setQuizzes();
+        const params = window.location.pathname;
+        var path = params.slice(params.lastIndexOf('/')+1);
+        this.setPath(path);
+        this.checkUser();
+    }
+
+    async setPath(path) {
+        await this.setState((prevSate, state) => ({
+            path: path
+        }));
+    }
+
+    checkUser(){
+        let user = JSON.parse(localStorage.getItem('user'));
+        if(user) {
+            this.setLoggedIn(true);
+            this.setQuizzes();
+        } else {
+            this.setLoggedIn(false);
+        }
+    }
+
+    async setLoggedIn(value){
+        await this.setState((prevSate, state) => ({
+            isLoggedIn: value
+        }));
     }
 
     async setQuizzes() {
@@ -30,7 +61,7 @@ class App extends Component {
     }
 
     render() {
-        return (
+        return (!this.state.isLoggedIn && this.state.path === 'login') ? (<Login/>) : (!this.state.isLoggedIn && this.state.path === 'sign-up') ? (<SignUp/>) : (
             <div className="App">
                 <MainNavigation/>
                 <Routes>

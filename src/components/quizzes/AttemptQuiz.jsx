@@ -48,9 +48,9 @@ class AttemptQuiz extends Component {
     }
 
     async setIsPrevious(value){
-        console.log(typeof value);
-        console.log(value);
-        await this.setState((prevState, props) => ({isPrevious: value == 1 ? true : false}));
+        await this.setState((prevState, props) => ({
+            isPrevious: value === 1 ? true : false
+        }));
     }
 
     async updateAnswer(index, answer){

@@ -1,0 +1,30 @@
+.form {
+    padding: 10px;
+}
+
+.fieldContainer{
+    padding: 10px;
+}
+
+.inputField {
+    width: 70%;
+    height: 50px;
+    border-radius: 7px;
+    border: 0px;
+    font-size: 18px;
+    padding-left: 10px;
+}
+
+.submitButton {
+    width: 35%;
+    height: 50px;
+    border-radius: 7px;
+    border: 0px;
+    font-size: 20px;
+    color: green;
+    background: #282c34;
+}
+
+.center {
+    text-align: center;
+}

@@ -59,7 +59,7 @@ class SignUp extends Component {
                     </Row>
                     <Row>
                         <Col className={classes.center} md={"12"}>
-                            <p>Already have an account? <a href={"/login"}>Login</a></p>
+                            <p>Already have an account? <a href={"/"}>Login</a></p>
                         </Col>
                     </Row>
                 </div>

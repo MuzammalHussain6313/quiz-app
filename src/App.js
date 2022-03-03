@@ -10,7 +10,7 @@ import {Component} from "react";
 import classes from './App.css';
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import {setQuizList} from "./store/actions/actions";
+import {setLogin, setQuizList} from "./store/actions/actions";
 import {getQuizzes} from "./api/index";
 import Login from "./authentication/login/login";
 import SignUp from "./authentication/signup/signup";
@@ -19,16 +19,16 @@ class App extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {
-            isLoggedIn: false,
-            path: '',
-        }
+        // this.state = {
+        //     isLoggedIn: false,
+        //     path: '',
+        // }
     }
 
     componentDidMount() {
-        const params = window.location.pathname;
-        var path = params.slice(params.lastIndexOf('/')+1);
-        this.setPath(path);
+        // const params = window.location.pathname;
+        // var path = params.slice(params.lastIndexOf('/')+1);
+        // this.setPath(path);
         this.checkUser();
     }
 
@@ -39,13 +39,15 @@ class App extends Component {
     }
 
     checkUser(){
-        let user = JSON.parse(localStorage.getItem('user'));
-        if(user) {
-            this.setLoggedIn(true);
-            this.setQuizzes();
+        let isLogin = JSON.parse(localStorage.getItem('isLoggedIn'));
+        if(isLogin) {
+            this.props.setLogin(true);
         } else {
-            this.setLoggedIn(false);
+            this.props.setLogin(false);
         }
+        setTimeout(() => {
+            console.log(this.props.isLoggedIn);
+        }, 500);
     }
 
     async setLoggedIn(value){
@@ -54,25 +56,26 @@ class App extends Component {
         }));
     }
 
-    async setQuizzes() {
-        var quizzes = await getQuizzes();
-        // quizzes = JSON.parse(localStorage.getItem('quizzes'));
-        if(quizzes.length> 0) await this.props.setQuizzes(quizzes);
-    }
-
     render() {
-        return (!this.state.isLoggedIn && this.state.path === 'login') ? (<Login/>) : (!this.state.isLoggedIn && this.state.path === 'sign-up') ? (<SignUp/>) : (
+        // (!this.state.isLoggedIn && this.state.path === 'login') ? (<Login/>) : (!this.state.isLoggedIn && this.state.path === 'sign-up') ? (<SignUp/>) :
+        return (
             <div className="App">
-                <MainNavigation/>
+                { this.props.isLoggedIn && <MainNavigation/>}
                 <Routes>
-                    <Route path='/' element={<Quizzes/>}>
-                    </Route>
-                    <Route path='/quizzes' element={<Quizzes/>}>
-                    </Route>
-                    <Route path='/quizzes/:quizId' element={<AttemptQuiz/>}>
-                    </Route>
-                    <Route path='/add-quiz' element={<AddQuiz/>}>
-                    </Route>
+                    {/*{ !this.props.isLoggedIn && <Route path='/login' element={<Login/>}>*/}
+                    {/*</Route>}*/}
+                    { !this.props.isLoggedIn && <Route path='/' element={<Login/>}>
+                    </Route>}
+                    {<Route path='/signup' element={<SignUp/>}>
+                    </Route>}
+                    { this.props.isLoggedIn && <Route path='/' element={<Quizzes/>}>
+                    </Route>}
+                    { this.props.isLoggedIn && <Route path='/quizzes' element={<Quizzes/>}>
+                    </Route>}
+                    { this.props.isLoggedIn && <Route path='/quizzes/:quizId' element={<AttemptQuiz/>}>
+                    </Route>}
+                    { this.props.isLoggedIn && <Route path='/add-quiz' element={<AddQuiz/>}>
+                    </Route>}
                     <Route path='*' element={<NotFound/>}>
                     </Route>
                 </Routes>
@@ -83,12 +86,14 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
     return {
+        isLoggedIn: state.quizReducer.isLoggedIn
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
         setQuizzes: (list) => setQuizList(list),
+        setLogin: (isLogin) => setLogin(isLogin),
     }, dispatch)
 }
 

@@ -8,7 +8,7 @@ class NotFound extends Component {
         this.state = {
             news: []
         };
-        this.getNews();
+        // this.getNews();
     }
 
     async getNews(){

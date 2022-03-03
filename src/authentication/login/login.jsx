@@ -2,6 +2,9 @@
 import React, {Component} from "react";
 import {Col, Row} from "react-bootstrap";
 import classes from './login.module.css';
+import {bindActionCreators} from "redux";
+import {setLogin} from "../../store/actions/actions";
+import {connect} from "react-redux";
 
 class Login extends Component {
 
@@ -15,6 +18,10 @@ class Login extends Component {
 
     login(event) {
         event.preventDefault();
+        localStorage.setItem('isLoggedIn', JSON.stringify(true));
+        this.props.setLogin(true);
+        window.open('/quizzes', '_self');
+        // document.getElementById("home").click();
     }
 
     render() {
@@ -45,13 +52,26 @@ class Login extends Component {
                     </Row>
                     <Row>
                         <Col className={classes.center} md={"12"}>
-                            <p>New to Quiz-app? <a href={"/sign-up"}>Create an account</a></p>
+                            <p>New to Quiz-app? <a href={"/signup"}>Create an account</a></p>
                         </Col>
                     </Row>
+                    <a id={"home"} href={"/quizzes"}/>
                 </div>
             </React.Fragment>
         )
     };
 }
 
-export default Login;
+const mapStateToProps = (state) => {
+    return {
+        isLoggedIn: state.quizReducer.isLoggedIn
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return bindActionCreators({
+        setLogin: (isLogin) => setLogin(isLogin),
+    }, dispatch)
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

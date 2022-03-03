@@ -6,7 +6,7 @@ import classes from './AttemptQuiz.module.css'
 import Toastify from "../../customUI/showToast/Toastify";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
-import {Navigate} from "react-router-dom";
+import {Navigate, NavLink} from "react-router-dom";
 import {addAttemptedQuizzes} from "../../api";
 
 class AttemptQuiz extends Component {
@@ -113,19 +113,27 @@ class AttemptQuiz extends Component {
         return this.state.redirect ? <Navigate to={this.state.path} /> : (
             <React.Fragment>
                 <div className="body">
+                    <Row>
+                        <Col sm={"3"}>
+                            <NavLink to='/quizzes'>
+                                <img className={classes.icons} src="/icons/back.svg" alt="image"/>
+                            </NavLink>
+                        </Col>
+                        <Col sm={"9"}>Attempt Quiz</Col>
+                    </Row>
                     <Row className={classes.header}>
                         <Col md={"9"}>
-                            <h4>{this.state.title}</h4>
-                            <p>{this.state.date}, {this.state.time}</p>
+                            <h4>{this.state.quiz.title}</h4>
+                            <p>{this.state.quiz.date} | {this.state.quiz.time}</p>
                         </Col>
                         <Col className={classes.marksContainer} md={"3"}>
-                            <h5>Marks: {this.state.totalMarks}</h5>
+                            <h5>Marks: {this.state.quiz.totalMarks}</h5>
                         </Col>
                     </Row>
                     <Row className={classes.questions}>
                         {
                             this.state.quiz.questions && this.state.quiz.questions.map((question, index) => (
-                                <Col md={"12"} key={question.quizId}>
+                                <Col md={"12"} key={question.key}>
                                     {   (question.type === 'fillInBlank') ?
                                         <Question key={question.questionId}
                                             type={question.type}
@@ -136,7 +144,7 @@ class AttemptQuiz extends Component {
                                             updateAnswer={this.updateAnswer.bind(this)}
                                         />
                                         : (question.type === 'bool') ?
-                                        <Question key={question.questionId}
+                                        <Question key={question.key}
                                             type={question.type}
                                             questionNo={index + 1}
                                             question={question}
@@ -146,7 +154,7 @@ class AttemptQuiz extends Component {
                                             updateReason={this.updateReason.bind(this)}
                                         />
                                         : (question.type === 'short') ?
-                                        <Question key={question.questionId}
+                                        <Question key={question.key}
                                               type={question.type}
                                               questionNo={index + 1}
                                               question={question.question}
@@ -154,7 +162,7 @@ class AttemptQuiz extends Component {
                                               marks={question.marks}
                                               updateAnswer={this.updateAnswer.bind(this)}
                                         />
-                                        :<Question key={question.questionId}
+                                        :<Question key={question.key}
                                             type={question.type}
                                             questionNo={index + 1}
                                             question={question.question}

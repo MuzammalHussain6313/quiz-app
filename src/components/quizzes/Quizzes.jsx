@@ -5,6 +5,8 @@ import Toastify from "../../customUI/showToast/Toastify";
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {Navigate} from "react-router-dom";
+import {getQuizzes} from "../../api";
+import {setQuizList} from "../../store/actions/actions";
 
 class Quizzes extends Component {
 
@@ -19,7 +21,8 @@ class Quizzes extends Component {
                 type: '' // success | error
             },
             redirect: false,
-            path: '/'
+            path: '/',
+            loading: true
         }
     }
 
@@ -27,25 +30,39 @@ class Quizzes extends Component {
         this.loadQuizzes();
     }
 
-    async loadQuizzes(){
-        setTimeout(() => {
-            var quizzes = this.props.quizzes;
-            var previousQuizzes = [];
-            var upcomingQuizzes = [];
-            if(quizzes?.length > 0) {
-                quizzes.forEach((quiz) => {
-                    this.isTimePassed(`${quiz.date} ${quiz.time}`) ? previousQuizzes.push(quiz) : upcomingQuizzes.push(quiz);
-                });
-            }
-            this.setQuizzes(upcomingQuizzes, previousQuizzes);
-        }, 400);
+    async loadQuizzes() {
+        var quizzes = await getQuizzes();
+        console.log(quizzes.length);
+        // quizzes = JSON.parse(localStorage.getItem('quizzes'));
+        if(quizzes.length> 0) {
+            await this.props.setQuizzes(quizzes);
+            this.setPreviousUpcomingQuizzes(quizzes);
+        } else {
+            await this.setState((prevState, props) => ({
+                loading: false
+            }));
+        }
+
     }
 
-    async setQuizzes(upcomingQuizzes, previousQuizzes) {
+    async setPreviousUpcomingQuizzes(quizzes){
+        // var quizzes = this.props.quizzes;
+        var previousQuizzes = [];
+        var upcomingQuizzes = [];
+        // if(quizzes?.length > 0) {
+            quizzes.forEach((quiz) => {
+                this.isTimePassed(`${quiz.date} ${quiz.time}`) ? previousQuizzes.push(quiz) : upcomingQuizzes.push(quiz);
+            });
+        // }
         await this.setState((prevState, props) => ({
             upcomingQuizzes: upcomingQuizzes,
-            previousQuizzes: previousQuizzes
+            previousQuizzes: previousQuizzes,
+            loading: false
         }));
+    }
+
+    async setQuizzesState(upcomingQuizzes, previousQuizzes) {
+
     }
 
     isTimePassed(quizDateTime) {
@@ -111,15 +128,15 @@ class Quizzes extends Component {
 
         return this.state.redirect ? <Navigate to={this.state.path} /> : (
             <React.Fragment>
-                {
-                    <Container className="body">
+                { this.state.loading ?  <p style={{paddingTop : '200px'}}>Loading...</p> :
+                    (<Container className="body">
                         <Row>
                             <Col className={classes.upcomingHeader} md={"12"}>
                                 <h3>Upcoming quizzes</h3>
                             </Col>
                             {
                                 this.state.upcomingQuizzes.length > 0 ? this.state.upcomingQuizzes.map((quiz, index) => (
-                                    <Col md="6" key={quiz.quizId} onClick={() => this.attemptQuiz(quiz, false)}>
+                                    <Col md="6" key={quiz.key} onClick={() => this.attemptQuiz(quiz, false)}>
                                         <div className={classes.listItem}>
                                             <h5>Quiz No.{index}: {quiz.title}</h5>
                                             <p>Date: {quiz.date} | Time: {quiz.time}</p>
@@ -136,7 +153,7 @@ class Quizzes extends Component {
                             </Col>
                             {
                                 this.state.previousQuizzes.length > 0 ? this.state.previousQuizzes.map((quiz, index) => (
-                                    <Col md="6" key={quiz.quizId} onClick={() => this.attemptQuiz(quiz, true)}>
+                                    <Col md="6" key={quiz.key} onClick={() => this.attemptQuiz(quiz, true)}>
                                         <div className={classes.listItem}>
                                             <h5>Quiz No.{index}: {quiz.title}</h5>
                                             <p>Date: {quiz.date} | Time: {quiz.time}</p>
@@ -147,7 +164,7 @@ class Quizzes extends Component {
                                 </Col>
                             }
                         </Row>
-                    </Container>
+                    </Container>)
                 }
                 { this.state.toast.show &&
                     <Toastify
@@ -170,6 +187,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
 
     return bindActionCreators({
+        setQuizzes: (list) => setQuizList(list),
     }, dispatch)
 }
 

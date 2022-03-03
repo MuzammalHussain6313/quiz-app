@@ -2,7 +2,7 @@
 import React, {Component} from "react";
 import classes from './AddQuestion.module.css';
 import Toastify from "../../customUI/showToast/Toastify";
-import firebase from "firebase";
+import {generateKey} from "../../api";
 
 class AddQuestion extends Component {
 
@@ -31,14 +31,14 @@ class AddQuestion extends Component {
         event.preventDefault();
         var question = {};
         if(this.props.type === 'bool'){
-            question.key = firebase.database().ref('quizzes/questions').push().key;
+            question.key = generateKey('quizzes/questions');
             question.question = this.question.current.value;
             question.correctAnswer = this.correctAnswer.current.value;
             question.type = 'bool';
             question.getReason = this.getReason.current.value === 'true';
             question.marks = this.marks.current.value
         } else if(this.props.type === 'mcq'){
-            question.key = firebase.database().ref('quizzes/questions').push().key;
+            question.key = generateKey('quizzes/questions');
             question.question = this.question.current.value;
             question.correctAnswer = this.correctAnswer.current.value;
             question.type = 'mcq';
@@ -50,14 +50,14 @@ class AddQuestion extends Component {
                 this.showToast('please enter at least one part before or after blank space', 'error');
                 return;
             }
-            question.key = firebase.database().ref('quizzes/questions').push().key;
+            question.key = generateKey('quizzes/questions');
             question.part1 = this.part1.current.value;
             question.part2 = this.part2.current.value;
             question.correctAnswer = this.correctAnswer.current.value;
             question.type = 'fillInBlank';
             question.marks = this.marks.current.value
         } else if(this.props.type === 'short'){
-            question.key = firebase.database().ref('quizzes/questions').push().key;
+            question.key = generateKey('quizzes/questions');
             question.question = this.question.current.value;
             question.correctAnswer = this.correctAnswer.current.value;
             question.type = 'short';

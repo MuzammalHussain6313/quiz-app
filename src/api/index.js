@@ -1,3 +1,4 @@
+
 import firebase from 'firebase';
 import axios from "axios";
 
@@ -13,11 +14,13 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
-var database = firebase.database();
 
-export default database;
-
-const base_url = '';
+// const database = firebase.database();
+// export default database;
+// You can use above database object by importing as
+// import database from '../../api';
+// database.ref('path/of/your/collection').push().key;
+// database.ref('path/of/your/collection').set(anyObject);
 
 export const state = {
     test: '',
@@ -56,4 +59,8 @@ export const addAttemptedQuizzes = async (markedQuiz) => {
 export const getNews = async () => {
     var response = await axios.get('https://api.publicapis.org/entries');
     return response.data;
+}
+
+export const generateKey = (ref) => {
+    return firebase.database().ref(ref).push().key;
 }

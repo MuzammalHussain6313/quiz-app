@@ -16,10 +16,6 @@ import SignUp from "./authentication/signup/signup";
 
 class App extends Component {
 
-    constructor(props) {
-        super(props);
-    }
-
     componentDidMount() {
         this.checkUser();
     }

@@ -8,8 +8,7 @@ import {connect} from "react-redux";
 import {setQuizList} from "../../store/actions/actions";
 import {bindActionCreators} from "redux";
 import { Navigate } from "react-router-dom";
-import {addQuiz} from "../../api";
-import firebase from "firebase";
+import {addQuiz, generateKey} from "../../api";
 
 class AddQuiz extends Component {
 
@@ -53,7 +52,7 @@ class AddQuiz extends Component {
         }
 
         this.state.quiz = {
-            key: firebase.database().ref('quizzes').push().key,
+            key: generateKey('quizzes'),
             title: this.title.current.value,
             totalMarks: this.totalMarks.current.value,
             date: this.date.current.value,

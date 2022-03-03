@@ -1,3 +1,4 @@
+
 import React, {Component} from 'react';
 import classes from './Quizzes.module.css';
 import {Col, Row, Container} from "react-bootstrap";
@@ -33,7 +34,6 @@ class Quizzes extends Component {
     async loadQuizzes() {
         var quizzes = await getQuizzes();
         console.log(quizzes.length);
-        // quizzes = JSON.parse(localStorage.getItem('quizzes'));
         if(quizzes.length> 0) {
             await this.props.setQuizzes(quizzes);
             this.setPreviousUpcomingQuizzes(quizzes);
@@ -46,23 +46,16 @@ class Quizzes extends Component {
     }
 
     async setPreviousUpcomingQuizzes(quizzes){
-        // var quizzes = this.props.quizzes;
         var previousQuizzes = [];
         var upcomingQuizzes = [];
-        // if(quizzes?.length > 0) {
-            quizzes.forEach((quiz) => {
-                this.isTimePassed(`${quiz.date} ${quiz.time}`) ? previousQuizzes.push(quiz) : upcomingQuizzes.push(quiz);
-            });
-        // }
+        quizzes.forEach((quiz) => {
+            this.isTimePassed(`${quiz.date} ${quiz.time}`) ? previousQuizzes.push(quiz) : upcomingQuizzes.push(quiz);
+        });
         await this.setState((prevState, props) => ({
             upcomingQuizzes: upcomingQuizzes,
             previousQuizzes: previousQuizzes,
             loading: false
         }));
-    }
-
-    async setQuizzesState(upcomingQuizzes, previousQuizzes) {
-
     }
 
     isTimePassed(quizDateTime) {
@@ -106,7 +99,6 @@ class Quizzes extends Component {
         if (hours === qhours && (mins >= qmins && mins <= qmins + 10)) {
             return true;
         } else if (hours === qhours && !(mins >= qmins && mins <= qmins + 10)) {
-            // if quiz time passed.
             return false;
         }
     }

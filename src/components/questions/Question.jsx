@@ -2,6 +2,7 @@
 import React, {Component} from "react";
 import classes from './Question.module.css'
 import {Col, Row} from "react-bootstrap";
+
 class Question extends Component {
 
     constructor(props) {

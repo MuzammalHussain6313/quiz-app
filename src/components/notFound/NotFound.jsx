@@ -1,3 +1,4 @@
+
 import React, {Component} from "react";
 import {getNews} from "../../api";
 
@@ -8,7 +9,6 @@ class NotFound extends Component {
         this.state = {
             news: []
         };
-        // this.getNews();
     }
 
     async getNews(){

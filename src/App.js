@@ -1,3 +1,4 @@
+
 import './App.css';
 import {Routes, Route} from 'react-router-dom'
 
@@ -7,11 +8,9 @@ import NotFound from './components/notFound/NotFound';
 import AttemptQuiz from './components/quizzes/AttemptQuiz';
 import AddQuiz from './components/quizzes/AddQuiz';
 import {Component} from "react";
-import classes from './App.css';
 import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {setLogin, setQuizList} from "./store/actions/actions";
-import {getQuizzes} from "./api/index";
 import Login from "./authentication/login/login";
 import SignUp from "./authentication/signup/signup";
 
@@ -19,23 +18,10 @@ class App extends Component {
 
     constructor(props) {
         super(props);
-        // this.state = {
-        //     isLoggedIn: false,
-        //     path: '',
-        // }
     }
 
     componentDidMount() {
-        // const params = window.location.pathname;
-        // var path = params.slice(params.lastIndexOf('/')+1);
-        // this.setPath(path);
         this.checkUser();
-    }
-
-    async setPath(path) {
-        await this.setState((prevSate, state) => ({
-            path: path
-        }));
     }
 
     checkUser(){
@@ -57,13 +43,10 @@ class App extends Component {
     }
 
     render() {
-        // (!this.state.isLoggedIn && this.state.path === 'login') ? (<Login/>) : (!this.state.isLoggedIn && this.state.path === 'sign-up') ? (<SignUp/>) :
         return (
             <div className="App">
                 { this.props.isLoggedIn && <MainNavigation/>}
                 <Routes>
-                    {/*{ !this.props.isLoggedIn && <Route path='/login' element={<Login/>}>*/}
-                    {/*</Route>}*/}
                     { !this.props.isLoggedIn && <Route path='/' element={<Login/>}>
                     </Route>}
                     {<Route path='/signup' element={<SignUp/>}>

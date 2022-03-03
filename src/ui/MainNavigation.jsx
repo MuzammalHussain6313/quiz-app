@@ -4,7 +4,7 @@ import {NavLink} from 'react-router-dom';
 import classes from './MainNavigation.module.css';
 import React, {Component} from "react";
 import {bindActionCreators} from "redux";
-import {setLogin, setQuizList} from "../store/actions/actions";
+import {setLogin} from "../store/actions/actions";
 import {connect} from "react-redux";
 import {Button} from "react-bootstrap";
 
@@ -19,7 +19,6 @@ class MainNavigation extends Component {
             this.props.setLogin(false);
             localStorage.setItem('isLoggedIn', null);
             window.open('/', '_self');
-            // document.getElementById("logout").click();
         } else {
             // Do nothing!
         }
@@ -28,7 +27,6 @@ class MainNavigation extends Component {
     render() {
         return (
             <header className={classes.header}>
-                {/*<div className={classes.logo}>Online Quizzes</div>*/}
                 <NavLink to='/' className={classes.logo}>Quiz App</NavLink>
                 <nav className={classes.nav}>
                     <ul>

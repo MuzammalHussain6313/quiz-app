@@ -10,10 +10,7 @@ import {Button} from "react-bootstrap";
 
 class MainNavigation extends Component {
 
-    constructor(props) {
-        super(props);
-    }
-
+    //
     logout() {
         if (window.confirm('Are you sure you want to logout?')) {
             this.props.setLogin(false);

@@ -8,6 +8,9 @@ import {connect} from "react-redux";
 import {Navigate} from "react-router-dom";
 import {getQuizzes} from "../../api";
 import {setQuizList} from "../../store/actions/actions";
+import attemptQuiz from "./AttemptQuiz";
+import routeNames from "../../routes/routNames";
+
 
 class Quizzes extends Component {
 
@@ -85,7 +88,7 @@ class Quizzes extends Component {
     async openQuiz(quiz, isPrevious) {
         await this.setState((prevState, props) => ({
             redirect: true,
-            path: `/quizzes/${isPrevious}${quiz.key}`
+            path: `${routeNames.user.quizzes}/${isPrevious}${quiz.key}`
         }));
     }
 

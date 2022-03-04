@@ -14,6 +14,8 @@ import {setLogin, setQuizList} from "./store/actions/actions";
 import Login from "./authentication/login/login";
 import SignUp from "./authentication/signup/signup";
 
+import Router from './routes';
+
 class App extends Component {
 
     componentDidMount() {
@@ -27,9 +29,6 @@ class App extends Component {
         } else {
             this.props.setLogin(false);
         }
-        setTimeout(() => {
-            console.log(this.props.isLoggedIn);
-        }, 500);
     }
 
     async setLoggedIn(value){
@@ -41,23 +40,24 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                { this.props.isLoggedIn && <MainNavigation/>}
-                <Routes>
-                    { !this.props.isLoggedIn && <Route path='/' element={<Login/>}>
-                    </Route>}
-                    {<Route path='/signup' element={<SignUp/>}>
-                    </Route>}
-                    { this.props.isLoggedIn && <Route path='/' element={<Quizzes/>}>
-                    </Route>}
-                    { this.props.isLoggedIn && <Route path='/quizzes' element={<Quizzes/>}>
-                    </Route>}
-                    { this.props.isLoggedIn && <Route path='/quizzes/:quizId' element={<AttemptQuiz/>}>
-                    </Route>}
-                    { this.props.isLoggedIn && <Route path='/add-quiz' element={<AddQuiz/>}>
-                    </Route>}
-                    <Route path='*' element={<NotFound/>}>
-                    </Route>
-                </Routes>
+                <Router/>
+                {/*{ this.props.isLoggedIn && <MainNavigation/>}*/}
+                {/*<Routes>*/}
+                {/*    { !this.props.isLoggedIn && <Route path='/' element={<Login/>}>*/}
+                {/*    </Route>}*/}
+                {/*    {<Route path='/signup' element={<SignUp/>}>*/}
+                {/*    </Route>}*/}
+                {/*    { this.props.isLoggedIn && <Route path='/' element={<Quizzes/>}>*/}
+                {/*    </Route>}*/}
+                {/*    { this.props.isLoggedIn && <Route path='/quizzes' element={<Quizzes/>}>*/}
+                {/*    </Route>}*/}
+                {/*    { this.props.isLoggedIn && <Route path='/quizzes/:quizId' element={<AttemptQuiz/>}>*/}
+                {/*    </Route>}*/}
+                {/*    { this.props.isLoggedIn && <Route path='/add-quiz' element={<AddQuiz/>}>*/}
+                {/*    </Route>}*/}
+                {/*    <Route path='*' element={<NotFound/>}>*/}
+                {/*    </Route>*/}
+                {/*</Routes>*/}
             </div>
         );
     }

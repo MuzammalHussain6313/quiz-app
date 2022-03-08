@@ -5,6 +5,7 @@ import classes from './login.module.css';
 import {bindActionCreators} from "redux";
 import {setLogin} from "../../store/actions/actions";
 import {connect} from "react-redux";
+import {login, saveUser} from "../../api";
 
 class Login extends Component {
 
@@ -16,12 +17,21 @@ class Login extends Component {
         this.password = React.createRef();
     }
 
-    login(event) {
+    async login(event) {
         event.preventDefault();
-        localStorage.setItem('isLoggedIn', JSON.stringify(true));
-        this.props.setLogin(true);
-        window.open('/quizzes', '_self');
-        // document.getElementById("home").click();
+        await login({
+            email: this.email.current.value,
+            password: this.password.current.value
+        }).then(async (res) => {
+            if(res !== ""){
+                await saveUser(res).then((response) => {
+                    localStorage.setItem('isLoggedIn', JSON.stringify(true));
+                    this.props.setLogin(true);
+                    window.open('/quizzes', '_self');
+                    // document.getElementById("home").click();
+                });
+            }
+        });
     }
 
     render() {

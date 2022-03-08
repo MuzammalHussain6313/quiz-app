@@ -2,6 +2,7 @@
 import React, {Component} from "react";
 import {Col, Row} from "react-bootstrap";
 import classes from './signup.module.css';
+import {signUp} from "../../api";
 
 class SignUp extends Component {
 
@@ -13,10 +14,28 @@ class SignUp extends Component {
         this.lastName = React.createRef();
         this.email = React.createRef();
         this.password = React.createRef();
+        this.role = React.createRef();
     }
 
-    signUp(event) {
+    async signUp(event) {
         event.preventDefault();
+        console.log({
+            firstName: this.firstName.current.value,
+            lastName: this.lastName.current.value,
+            email: this.email.current.value,
+            password: this.password.current.value,
+            role: this.role.current.value
+        });
+        await signUp({
+            firstName: this.firstName.current.value,
+            lastName: this.lastName.current.value,
+            email: this.email.current.value,
+            password: this.password.current.value,
+            role: this.role.current.value
+        }).then(() => {
+            console.log('jdjkljklds');
+            document.getElementById("login").click();
+        });
     }
 
     render() {
@@ -31,18 +50,26 @@ class SignUp extends Component {
                             <form id={"SignUpForm"} className={classes.form} ref={this.form} onSubmit={(e) => this.signUp(e)}>
 
                                 <div className={classes.fieldContainer}>
-                                    <input ref={this.firstname} required={true}
-                                           className={classes.inputField} type="text" id="first_name" placeholder="Type first name"/>
+                                    <input ref={this.firstName} required={true}
+                                           className={classes.inputField} type="text" id="first_name" placeholder="First name"/>
                                 </div>
 
                                 <div className={classes.fieldContainer}>
                                     <input ref={this.lastName} required={true}
-                                           className={classes.inputField} type="text" id="last_name" placeholder="Type last name"/>
+                                           className={classes.inputField} type="text" id="last_name" placeholder="Last name"/>
+                                </div>
+
+                                <div className={classes.fieldContainer}>
+                                    <select required={true} ref={this.role} className={classes.inputField} name="role" id="role" placeholder="Select role">
+                                        <option value="">-- Select Role --</option>
+                                        <option value="teacher">Teacher</option>
+                                        <option value="student">Student</option>
+                                    </select>
                                 </div>
 
                                 <div className={classes.fieldContainer}>
                                     <input ref={this.email} required={true}
-                                           className={classes.inputField} type="email" id="email" placeholder="your.email@domain.com"/>
+                                           className={classes.inputField} type="email" id="email" placeholder="email"/>
                                 </div>
 
                                 <div className={classes.fieldContainer}>
@@ -59,7 +86,7 @@ class SignUp extends Component {
                     </Row>
                     <Row>
                         <Col className={classes.center} md={"12"}>
-                            <p>Already have an account? <a href={"/"}>Login</a></p>
+                            <p>Already have an account? <a id={"login"} href={"/"}>Login</a></p>
                         </Col>
                     </Row>
                 </div>

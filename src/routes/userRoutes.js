@@ -7,6 +7,7 @@ import Quizzes from "../components/quizzes/Quizzes";
 import AttemptQuiz from "../components/quizzes/AttemptQuiz";
 import MainNavigation from "../ui/MainNavigation";
 import NotFound from "../components/notFound/NotFound";
+import AddQuiz from "../components/quizzes/AddQuiz";
 
 const AuthLayout = () => (
     <>
@@ -25,6 +26,7 @@ const UserRoutes = {
         { path: '/', element: <Navigate to={routeNames.user.quizzes} /> },
         { path: routeNames.user.quizzes, element: <Quizzes /> },
         { path: routeNames.user.attemptQuiz, element: <AttemptQuiz /> },
+        { path: routeNames.user.addQuiz, element: <AddQuiz /> },
         { path: '/404', element: <NotFound /> },
         // { path: '*', element: <Navigate to={routeNames.user.quizzes} /> },
         { path: '*', element: <Navigate to="/404" /> },

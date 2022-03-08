@@ -9,7 +9,8 @@ const routeNames = {
     user: {
         404: '/404',
         quizzes: '/quizzes',
-        attemptQuiz: '/quizzes/:id'
+        attemptQuiz: '/quizzes/:id',
+        addQuiz: '/add-quiz'
     }
 }
 

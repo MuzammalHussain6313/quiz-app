@@ -27,6 +27,47 @@ export const state = {
     quizzes: []
 }
 
+export const signUp = async (user) => {
+    await firebase.auth().createUserWithEmailAndPassword(user.email, user.password).then( async res => {
+        // console.log("user in api call", state);
+        // var key = await firebase.database().ref('users').push().key;
+        await firebase.database().ref(`users/${res.user.uid}`).set(user).then(res => {
+            console.log('data pushed');
+        });
+        const auth = firebase.auth().currentUser;
+        await auth.sendEmailVerification().then(() => {
+            alert('We send you a verification email. Please check your email and verify!');
+        });
+    }).catch(err => {
+        console.log(err);
+    });
+}
+
+export const login = async (user) => {
+    var uid = '';
+    await firebase.auth().signInWithEmailAndPassword(user.email, user.password).then(res => {
+        console.log('logged in user res: ', res);
+        if (res.user.emailVerified) {
+            uid = res.user.uid;
+            // this.saveUser(res.user.uid);
+        } else {
+            alert('Please verify your email first.');
+        }
+        return uid;
+    }).catch(error => {
+        alert(error.message);
+    });
+    return uid;
+}
+
+export const saveUser = async (id) => {
+    await firebase.database().ref(`users/${id}`).once('value', snapshot => {
+        localStorage.setItem('user', JSON.stringify(snapshot.val()));
+    }).catch(e => {
+        console.log('error occured...', e);
+    });
+}
+
 export const addQuiz = async (quiz) => {
     var key = firebase.database().ref('quizzes').push().key;
     await firebase.database().ref(`quizzes/${key}`).set(quiz).then(res => {

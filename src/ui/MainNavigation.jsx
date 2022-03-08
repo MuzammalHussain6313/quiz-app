@@ -10,12 +10,16 @@ import {Button} from "react-bootstrap";
 
 class MainNavigation extends Component {
 
+    componentDidMount() {
+        this.user = JSON.parse(localStorage.getItem("user"));
+    }
+
     //
     logout() {
         if (window.confirm('Are you sure you want to logout?')) {
             this.props.setLogin(false);
-            localStorage.setItem('isLoggedIn', null);
-            window.open('/', '_self');
+            localStorage.clear();
+            // window.open('/', '_self');
         } else {
             // Do nothing!
         }
@@ -32,11 +36,11 @@ class MainNavigation extends Component {
                                 Quizzes
                             </NavLink>
                         </li>
-                        <li>
+                        { this.user?.role === 'teacher' && <li>
                             <NavLink to='/add-quiz'>
                                 Add a Quiz
                             </NavLink>
-                        </li>
+                        </li>}
                         <li>
                             <Button onClick={(event) => this.logout()}>
                                 Logout
